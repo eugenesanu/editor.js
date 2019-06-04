@@ -138,9 +138,9 @@ export default class InlineToolbar extends Module {
     const newCoords = {
       x: selectionRect.x - wrapperOffset.left,
       y: selectionRect.y
-        + selectionRect.height
+        - this.nodes.wrapper.offsetHeight
         // + window.scrollY
-        + wrapperOffset.top
+        - wrapperOffset.top
         - this.toolbarVerticalMargin,
     };
 
