@@ -138,7 +138,7 @@ export default class InlineToolbar extends Module {
     const newCoords = {
       x: selectionRect.x - wrapperOffset.left,
       y: selectionRect.y
-        - this.nodes.wrapper.offsetHeight
+        // - this.nodes.wrapper.offsetHeight
         // + window.scrollY
         - wrapperOffset.top
         - this.toolbarVerticalMargin,
@@ -152,7 +152,7 @@ export default class InlineToolbar extends Module {
     }
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
-    this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
+    this.nodes.wrapper.style.bottom = `calc(100% - ${Math.floor(newCoords.y)}px`;
   }
 
   /**
