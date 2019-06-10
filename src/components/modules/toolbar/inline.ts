@@ -46,7 +46,7 @@ export default class InlineToolbar extends Module {
   /**
    * Margin above/below the Toolbar
    */
-  private readonly toolbarVerticalMargin: number = 20;
+  private readonly toolbarVerticalMargin: number = 30;
 
   /**
    * Tools instances
