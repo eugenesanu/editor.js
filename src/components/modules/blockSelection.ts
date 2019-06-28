@@ -75,27 +75,6 @@ export default class BlockSelection extends Module {
   }
 
   /**
-   * Flag used to define block selection
-   * First CMD+A defines it as true and then second CMD+A selects all Blocks
-   * @type {boolean}
-   */
-  private needToSelectAll: boolean = false;
-
-  /**
-   * Flag used to define native input selection
-   * In this case we allow double CMD+A to select Block
-   * @type {boolean}
-   */
-  private nativeInputSelected: boolean = false;
-
-  /**
-   * Flag identifies any input selection
-   * That means we can select whole Block
-   * @type {boolean}
-   */
-  private readyToBlockSelection: boolean = false;
-
-  /**
    * SelectionUtils instance
    * @type {SelectionUtils}
    */
@@ -154,10 +133,6 @@ export default class BlockSelection extends Module {
    * Clear selection from Blocks
    */
   public clearSelection(restoreSelection = false) {
-    this.needToSelectAll = false;
-    this.nativeInputSelected = false;
-    this.readyToBlockSelection = false;
-
     if (!this.anyBlockSelected || this.Editor.RectangleSelection.isRectActivated()) {
       this.Editor.RectangleSelection.clearSelection();
       return;
@@ -234,33 +209,10 @@ export default class BlockSelection extends Module {
   private handleCommandA(event): void {
     this.Editor.RectangleSelection.clearSelection();
 
-    /** allow default selection on native inputs */
-    if ($.isNativeInput(event.target) && !this.nativeInputSelected) {
-      this.nativeInputSelected = true;
-      return;
-    }
-
-    const inputs = this.Editor.BlockManager.currentBlock.inputs;
-
-    /**
-     * If Block has more than one editable element allow native selection
-     * Second cmd+a will select whole Block
-     */
-    if (inputs.length > 1 && !this.readyToBlockSelection) {
-      this.readyToBlockSelection = true;
-      return;
-    }
-
     /** Prevent default selection */
     event.preventDefault();
 
-    if (this.needToSelectAll) {
-      this.selectAllBlocks();
-      this.needToSelectAll = false;
-    } else {
-      this.selectBlockByIndex();
-      this.needToSelectAll = true;
-    }
+    this.selectAllBlocks();
   }
 
   /**
