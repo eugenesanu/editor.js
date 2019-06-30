@@ -164,12 +164,9 @@ export default class LinkInlineTool implements InlineTool {
        * Save selection before change focus to the input
        */
       if (!this.inputOpened) {
-        /** Create blue background instead of selection */
-        this.selection.setFakeBackground();
         this.selection.save();
       } else {
         this.selection.restore();
-        this.selection.removeFakeBackground();
       }
       const parentAnchor = this.selection.findParentTag('A');
 
@@ -199,14 +196,7 @@ export default class LinkInlineTool implements InlineTool {
     if (anchorTag) {
       this.nodes.button.classList.add(this.CSS.buttonUnlink);
       this.nodes.button.classList.add(this.CSS.buttonActive);
-      this.openActions();
-
-      /**
-       * Fill input value with link href
-       */
-      const hrefAttr = anchorTag.getAttribute('href');
-      this.nodes.input.value = hrefAttr !== 'null' ? hrefAttr : '';
-
+      this.openButtons();
       this.selection.save();
     } else {
       this.nodes.button.classList.remove(this.CSS.buttonUnlink);
@@ -250,24 +240,18 @@ export default class LinkInlineTool implements InlineTool {
     this.inlineToolbar.toggleButtons(false);
   }
 
+  private openButtons(): void {
+    this.nodes.action.classList.remove(this.CSS.actionShowed);
+    this.inputOpened = false;
+    this.inlineToolbar.toggleButtons(true);
+  }
+
   /**
    * Close input
    * @param {boolean} clearSavedSelection — we don't need to clear saved selection
    *                                        on toggle-clicks on the icon of opened Toolbar
    */
   private closeActions(clearSavedSelection: boolean = true): void {
-    if (this.selection.isFakeBackgroundEnabled) {
-      // if actions is broken by other selection We need to save new selection
-      const currentSelection = new SelectionUtils();
-      currentSelection.save();
-
-      this.selection.restore();
-      this.selection.removeFakeBackground();
-
-      // and recover new selection after removing fake background
-      currentSelection.restore();
-    }
-
     this.nodes.action.classList.remove(this.CSS.actionShowed);
     this.nodes.input.value = '';
     if (clearSavedSelection) {
@@ -304,7 +288,6 @@ export default class LinkInlineTool implements InlineTool {
     value = this.prepareLink(value);
 
     this.selection.restore();
-    this.selection.removeFakeBackground();
 
     this.insertLink(value);
 
