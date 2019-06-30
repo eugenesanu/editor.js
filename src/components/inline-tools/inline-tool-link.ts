@@ -127,7 +127,7 @@ export default class LinkInlineTool implements InlineTool {
   public renderActions(): HTMLElement {
     const close = document.createElement('span') as HTMLSpanElement;
 
-    close.appendChild($.svg('close', 11, 11));
+    close.appendChild($.svg('close-inline', 11, 11));
     close.classList.add(this.CSS.close);
     close.addEventListener('click', (event: MouseEvent) => {
       this.handleSave(event);
