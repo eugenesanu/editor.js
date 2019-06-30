@@ -14,6 +14,7 @@ export default class InlineToolbarAPI extends Module {
     return {
       close: () => this.close(),
       open: () => this.open(),
+      toggleButtons: (visible: boolean) => this.toggleButtons(visible),
     };
   }
 
@@ -29,5 +30,12 @@ export default class InlineToolbarAPI extends Module {
    */
   public close(): void {
     this.Editor.InlineToolbar.close();
+  }
+
+  /**
+   * Toggle Buttons row
+   */
+  public toggleButtons(visible: boolean): void {
+    this.Editor.InlineToolbar.toggleButtons(visible);
   }
 }

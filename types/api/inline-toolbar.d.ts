@@ -11,5 +11,10 @@ export interface InlineToolbar {
      * Opens InlineToolbar
      */
     open(): void;
+
+    /**
+     * Toggles buttons row
+     */
+    toggleButtons(visible: boolean): void;
 }
   

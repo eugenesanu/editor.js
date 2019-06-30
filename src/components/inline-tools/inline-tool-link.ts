@@ -3,7 +3,7 @@ import SelectionUtils from '../selection';
 import $ from '../dom';
 import _ from '../utils';
 import {API, InlineTool, SanitizerConfig} from '../../../types';
-import {Notifier, Toolbar} from '../../../types/api';
+import {InlineToolbar, Notifier, Toolbar} from '../../../types/api';
 
 /**
  * Link Tool
@@ -56,7 +56,9 @@ export default class LinkInlineTool implements InlineTool {
     buttonModifier: 'ce-inline-tool--link',
     buttonUnlink: 'ce-inline-tool--unlink',
     input: 'ce-inline-tool-input',
-    inputShowed: 'ce-inline-tool-input--showed',
+    actionShowed: 'ce-inline-tool-wrap--showed',
+    action: 'ce-inline-tool-wrap',
+    close: 'ce-inline-tool-wrap__close',
   };
 
   /**
@@ -65,9 +67,11 @@ export default class LinkInlineTool implements InlineTool {
   private nodes: {
     button: HTMLButtonElement;
     input: HTMLInputElement;
+    action: HTMLDivElement;
   } = {
     button: null,
     input: null,
+    action: null,
   };
 
   /**
@@ -88,7 +92,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Available inline toolbar methods (open/close)
    */
-  private inlineToolbar: Toolbar;
+  private inlineToolbar: InlineToolbar;
 
   /**
    * Notifier API methods
@@ -121,15 +125,30 @@ export default class LinkInlineTool implements InlineTool {
    * Input for the link
    */
   public renderActions(): HTMLElement {
+    const close = document.createElement('span') as HTMLSpanElement;
+
+    close.appendChild($.svg('close', 11, 11));
+    close.classList.add(this.CSS.close);
+    close.addEventListener('click', (event: MouseEvent) => {
+      this.handleSave(event);
+    });
+
+    this.nodes.action = document.createElement('div') as HTMLDivElement;
+    this.nodes.action.classList.add(this.CSS.action);
+
     this.nodes.input = document.createElement('input') as HTMLInputElement;
-    this.nodes.input.placeholder = 'Add a link';
+    this.nodes.input.placeholder = 'Paste or type a link...';
     this.nodes.input.classList.add(this.CSS.input);
     this.nodes.input.addEventListener('keydown', (event: KeyboardEvent) => {
       if (event.keyCode === this.ENTER_KEY) {
-        this.enterPressed(event);
+        this.handleSave(event);
       }
     });
-    return this.nodes.input;
+
+    this.nodes.action.appendChild(this.nodes.input);
+    this.nodes.action.appendChild(close);
+
+    return this.nodes.action;
   }
 
   /**
@@ -223,11 +242,12 @@ export default class LinkInlineTool implements InlineTool {
    * @param {boolean} needFocus - on link creation we need to focus input. On editing - nope.
    */
   private openActions(needFocus: boolean = false): void {
-    this.nodes.input.classList.add(this.CSS.inputShowed);
+    this.nodes.action.classList.add(this.CSS.actionShowed);
     if (needFocus) {
       this.nodes.input.focus();
     }
     this.inputOpened = true;
+    this.inlineToolbar.toggleButtons(false);
   }
 
   /**
@@ -248,19 +268,19 @@ export default class LinkInlineTool implements InlineTool {
       currentSelection.restore();
     }
 
-    this.nodes.input.classList.remove(this.CSS.inputShowed);
+    this.nodes.action.classList.remove(this.CSS.actionShowed);
     this.nodes.input.value = '';
     if (clearSavedSelection) {
       this.selection.clearSaved();
     }
     this.inputOpened = false;
+    this.inlineToolbar.toggleButtons(true);
   }
 
   /**
-   * Enter pressed on input
-   * @param {KeyboardEvent} event
+   * @param {UIEvent} event
    */
-  private enterPressed(event: KeyboardEvent): void {
+  private handleSave(event: UIEvent): void {
     let value = this.nodes.input.value || '';
 
     if (!value.trim()) {

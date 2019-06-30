@@ -17,6 +17,10 @@
 
   &__buttons {
     display: flex;
+
+    &--hidden {
+      display: none;
+    }
   }
 }
 
@@ -48,23 +52,37 @@
   }
 
   &-input {
-    background-color: var(--bg-light);
+    background-color: #2E2E2C;
     outline: none;
     border: 0;
     border-radius: 3px;
     margin: 6px 0 0;
-    font-size: 13px;
+    font-size: 16px;
+    line-height: 29px;
     padding: 8px;
     width: 100%;
     box-sizing: border-box;
-    display: none;
+    color: #fff;
 
     &::placeholder {
-      color: var(--grayText);
+      color: rgba(255,255,255,.5);
     }
+  }
+
+  &-wrap {
+    display: none;
+    position: relative;
 
     &--showed {
       display: block;
+    }
+
+    &__close {
+      cursor: pointer;
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
     }
   }
 }

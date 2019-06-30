@@ -24,6 +24,7 @@ export default class InlineToolbar extends Module {
     inlineToolbar: 'ce-inline-toolbar',
     inlineToolbarShowed: 'ce-inline-toolbar--showed',
     buttonsWrapper: 'ce-inline-toolbar__buttons',
+    buttonsWrapperHidden: 'ce-inline-toolbar__buttons--hidden',
     actionsWrapper: 'ce-inline-toolbar__actions',
     inlineToolButton: 'ce-inline-tool',
     inlineToolButtonLast: 'ce-inline-tool--last',
@@ -196,6 +197,15 @@ export default class InlineToolbar extends Module {
         toolInstance.clear();
       }
     });
+  }
+
+  public toggleButtons(visible: boolean): void {
+    if (visible) {
+      this.nodes.buttons.classList.remove(this.CSS.buttonsWrapperHidden);
+    } else {
+      this.nodes.buttons.classList.add(this.CSS.buttonsWrapperHidden);
+    }
+
   }
 
   /**
