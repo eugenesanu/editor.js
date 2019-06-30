@@ -19,6 +19,9 @@ export default class BlockEvents extends Module {
      * Fire keydown processor by event.keyCode
      */
     switch (event.keyCode) {
+      case _.keyCodes.DELETE:
+        this.deletePressed(event);
+        break;
       case _.keyCodes.BACKSPACE:
         this.backspace(event);
         break;
@@ -349,6 +352,105 @@ export default class BlockEvents extends Module {
        */
       this.mergeBlocks();
     }
+  }
+
+  private deletePressed(event: KeyboardEvent): void {
+    const { BlockManager, BlockSelection, Caret } = this.Editor;
+    const currentBlock = BlockManager.currentBlock;
+    const tool = this.Editor.Tools.available[currentBlock.name];
+
+    /**
+     * Check if Block should be removed by current Delete keydown
+     */
+    if (currentBlock.selected || currentBlock.isEmpty && currentBlock.currentInput === currentBlock.lastInput) {
+      event.preventDefault();
+
+      const index = BlockManager.currentBlockIndex;
+
+      if (BlockManager.nextBlock && BlockManager.nextBlock.inputs.length === 0) {
+        /** If next block doesn't contain inputs, remove it */
+        BlockManager.removeBlock(index + 1);
+      } else {
+        /** If block is empty, just remove it */
+        BlockManager.removeBlock();
+      }
+
+      Caret.setToBlock(
+        BlockManager.currentBlock,
+        index ? Caret.positions.END : Caret.positions.START,
+      );
+
+      /** Close Toolbar */
+      this.Editor.Toolbar.close();
+
+      /** Clear selection */
+      BlockSelection.clearSelection();
+      return;
+    }
+
+    /**
+     * Don't handle Backspaces when Tool sets enableLineBreaks to true.
+     * Uses for Tools like <code> where line breaks should be handled by default behaviour.
+     *
+     * But if caret is at start of the block, we allow to remove it by backspaces
+     */
+    if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS] && !Caret.isAtEnd) {
+      return;
+    }
+
+    const isLastBlock = BlockManager.nextBlock === null;
+    const canMergeBlocks = Caret.isAtEnd && currentBlock.currentInput === currentBlock.lastInput && !isLastBlock;
+
+    if (canMergeBlocks) {
+      /**
+       * preventing browser default behaviour
+       */
+      event.preventDefault();
+
+      /**
+       * Merge Blocks
+       */
+      this.mergeNextBlock();
+    }
+  }
+
+  private mergeNextBlock() {
+    const { BlockManager, Caret, Toolbar } = this.Editor;
+    const targetBlock = BlockManager.nextBlock;
+    const blockToMerge = BlockManager.currentBlock;
+
+    /**
+     * Blocks that can be merged:
+     * 1) with the same Name
+     * 2) Tool has 'merge' method
+     *
+     * other case will handle as usual ARROW LEFT behaviour
+     */
+    if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
+      /** If target Block doesn't contain inputs or empty, remove it */
+      if (targetBlock.inputs.length === 0 || targetBlock.isEmpty) {
+        BlockManager.removeBlock(BlockManager.currentBlockIndex - 1);
+
+        Caret.setToBlock(BlockManager.currentBlock);
+        Toolbar.close();
+        return;
+      }
+
+      if (Caret.navigateNext()) {
+        Toolbar.close();
+      }
+
+      return;
+    }
+
+    Caret.createShadow(blockToMerge.pluginsContent);
+    BlockManager.mergeBlocks(blockToMerge, targetBlock)
+      .then( () => {
+        /** Restore caret position after merge */
+        Caret.restoreCaret(blockToMerge.pluginsContent as HTMLElement);
+        targetBlock.pluginsContent.normalize();
+        Toolbar.close();
+      });
   }
 
   /**
