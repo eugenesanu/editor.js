@@ -67,25 +67,8 @@ export default class Saver extends Module {
     let totalTime = 0;
     const blocks = [];
 
-    console.groupCollapsed('[Editor.js saving]:');
-
     allExtractedData.forEach(({tool, data, time, isValid}) => {
       totalTime += time;
-
-      /**
-       * Capitalize Tool name
-       */
-      console.group(`${tool.charAt(0).toUpperCase() + tool.slice(1)}`);
-
-      if (isValid) {
-        /** Group process info */
-        console.log(data);
-        console.groupEnd();
-      } else {
-        console.log(`Block «${tool}» skipped because saved data is invalid`);
-        console.groupEnd();
-        return;
-      }
 
       /** If it was stub Block, get original data */
       if (tool === this.Editor.Tools.stubTool) {
@@ -98,9 +81,6 @@ export default class Saver extends Module {
         data,
       });
     });
-
-    console.log('Total', totalTime);
-    console.groupEnd();
 
     return {
       time: +new Date(),
