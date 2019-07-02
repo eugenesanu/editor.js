@@ -1,6 +1,7 @@
 import Module from '../__module';
 import $ from '../dom';
 import _ from '../utils';
+import SelectionUtils from '../selection';
 import {
   BlockTool,
   BlockToolConstructable,
@@ -378,7 +379,7 @@ export default class Paste extends Module {
    * @param {ClipboardEvent} event
    */
   private handlePasteEvent = async (event: ClipboardEvent): Promise<void> => {
-    const {BlockManager, Tools, Toolbar} = this.Editor;
+    const {BlockManager, Tools, Toolbar, BlockSelection} = this.Editor;
 
     /** If target is native input or is not Block, use browser behaviour */
     if (
@@ -389,6 +390,8 @@ export default class Paste extends Module {
 
     event.preventDefault();
     this.processDataTransfer(event.clipboardData);
+
+    BlockManager.removeSelectedBlocks();
 
     BlockManager.clearFocused();
     Toolbar.close();
