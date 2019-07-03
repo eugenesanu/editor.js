@@ -173,7 +173,7 @@ export default class RectangleSelection extends Module {
     const { selectedBlocks } = this.Editor.BlockSelection;
 
     if (selectedBlocks.length === 1) {
-      this.Editor.ConversionToolbar.tryToShow(selectedBlocks[0]);
+      // this.Editor.ConversionToolbar.tryToShow(selectedBlocks[0]);
     }
   }
 

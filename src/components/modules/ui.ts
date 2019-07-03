@@ -505,7 +505,7 @@ export default class UI extends Module {
       this.Editor.InlineToolbar.close();
       this.Editor.Toolbar.close();
       this.Editor.BlockSelection.clearSelection(event);
-      this.Editor.ConversionToolbar.close();
+      // this.Editor.ConversionToolbar.close();
     }
 
     if (Selection.isAtEditor) {

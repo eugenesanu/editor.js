@@ -75,7 +75,7 @@ export default class BlockEvents extends Module {
      */
     if (_.isPrintableKey(event.keyCode)) {
       this.Editor.Toolbar.close();
-      this.Editor.ConversionToolbar.close();
+      // this.Editor.ConversionToolbar.close();
 
       /**
        * Allow to use shortcuts with selected blocks
@@ -111,13 +111,15 @@ export default class BlockEvents extends Module {
      * Conversion Toolbar will be opened when user selects 85% of plugins content
      * that why we must with the length of pluginsContent
      */
-    if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
-      InlineToolbar.close();
-      ConversionToolbar.tryToShow(block);
-    } else {
-      ConversionToolbar.close();
-      InlineToolbar.tryToShow(true);
-    }
+    // if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
+    //   InlineToolbar.close();
+    //   ConversionToolbar.tryToShow(block);
+    // } else {
+    //   ConversionToolbar.close();
+    //   InlineToolbar.tryToShow(true);
+    // }
+
+    InlineToolbar.tryToShow(true);
 
     /**
      * Check if editor is empty on each keyup and add special css class to wrapper
@@ -144,10 +146,11 @@ export default class BlockEvents extends Module {
        */
       if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
         InlineToolbar.close();
-        ConversionToolbar.tryToShow(block);
+        // ConversionToolbar.tryToShow(block);
+        InlineToolbar.tryToShow();
       } else if (!SelectionUtils.isCollapsed) {
         InlineToolbar.tryToShow();
-        ConversionToolbar.close();
+        // ConversionToolbar.close();
       } else {
         InlineToolbar.close();
 
@@ -156,7 +159,7 @@ export default class BlockEvents extends Module {
          * @see RectangleSelection#endSelection
          */
         if (BlockSelection.selectedBlocks.length !== 1) {
-          ConversionToolbar.close();
+          // ConversionToolbar.close();
         }
       }
     }, 30)();
