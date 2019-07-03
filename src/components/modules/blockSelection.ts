@@ -7,6 +7,7 @@
  */
 import Module from '../__module';
 import _ from '../utils';
+import Block from '../block';
 import $ from '../dom';
 
 import SelectionUtils from '../selection';
@@ -75,6 +76,14 @@ export default class BlockSelection extends Module {
   }
 
   /**
+   * Return selected Blocks array
+   * @return {Block[]}
+   */
+  public get selectedBlocks(): Block[] {
+    return this.Editor.BlockManager.blocks.filter((block: Block) => block.selected);
+  }
+
+  /**
    * SelectionUtils instance
    * @type {SelectionUtils}
    */
@@ -131,33 +140,43 @@ export default class BlockSelection extends Module {
 
   /**
    * Clear selection from Blocks
+   *
+   * @param {Event} reason - event caused clear of selection
+   * @param {boolean} restoreSelection - if true, restore saved selection
    */
-  public clearSelection(restoreSelection = false) {
-    if (!this.anyBlockSelected || this.Editor.RectangleSelection.isRectActivated()) {
+  public clearSelection(reason?: Event, restoreSelection = false) {
+    const {BlockManager, Caret, RectangleSelection} = this.Editor;
+
+    /**
+     * If reason caused clear of the selection was printable key and any block is selected,
+     * remove selected blocks and insert pressed key
+     */
+    if (this.anyBlockSelected && reason && reason instanceof KeyboardEvent && _.isPrintableKey(reason.keyCode)) {
+      const indexToInsert = BlockManager.removeSelectedBlocks();
+
+      BlockManager.insertInitialBlockAtIndex(indexToInsert, true);
+      Caret.setToBlock(BlockManager.currentBlock);
+      _.delay(() => {
+        Caret.insertContentAtCaretPosition(reason.key);
+      }, 20)();
+    }
+
+    this.Editor.CrossBlockSelection.clear(reason);
+
+    if (!this.anyBlockSelected || RectangleSelection.isRectActivated()) {
       this.Editor.RectangleSelection.clearSelection();
       return;
     }
-
-    /**
-     * Restore selection when Block is already selected
-     * but someone tries to write something.
-     */
-    if (restoreSelection) {
-      this.selection.restore();
-    }
-
-    /** Now all blocks cleared */
-    this.allBlocksSelected = false;
   }
 
   /**
    * Reduce each Block and copy its content
    */
   public copySelectedBlocks(): void {
-    const {BlockManager, Sanitizer} = this.Editor;
+    const {Sanitizer} = this.Editor;
     const fakeClipboard = $.make('div');
 
-    BlockManager.blocks.filter((block) => block.selected)
+    this.selectedBlocks.filter((block) => block.selected)
       .forEach((block) => {
         /**
          * Make <p> tag that holds clean HTML

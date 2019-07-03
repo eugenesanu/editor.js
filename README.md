@@ -85,7 +85,7 @@ Shortcut | Action | Restrictions
 Also we support shortcuts on the all type of Tools. Specify a shortcut with the Tools configuration. For example:
 
 ```js
-var editor = EditorJS({
+var editor = new EditorJS({
   //...
   tools: {
     header: {
@@ -113,7 +113,7 @@ There are few steps to run Editor.js on your site.
 
 ## Load Editor's core
 
-Firstly you need to get Editor.js itself. It is a [minified script](build/editor.js) with Editor's core and some default must-have tools.
+Firstly you need to get Editor.js itself. It is a [minified script](dist/editor.js) with Editor's core and some default must-have tools.
 
 Choose the most usable method of getting Editor for you.
 
@@ -157,7 +157,7 @@ Copy [editor.js](build/editor.js) file to your project and load it.
 
 ## Load Tools
 
-Each Block at the Editor.js represented by [Tools](docs/tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
+Each Block at the Editor.js is represented by [Tools](docs/tools.md). There are simple external scripts with their own logic. Probably you want to use several Block Tools that should be connected.
 
 For example check out our [Header](https://github.com/editor-js/header) Tool that represents heading blocks.
 
@@ -196,7 +196,7 @@ var editor = new EditorJS({
     /**
      * Create a holder for the Editor and pass its ID
      */
-    holderId : 'editorjs',
+    holder : 'editorjs',
 
     /**
      * Available Tools list.
