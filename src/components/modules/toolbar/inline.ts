@@ -334,7 +334,7 @@ export default class InlineToolbar extends Module {
     }
 
     // empty selection
-    if (currentSelection.isCollapsed || selectedText.length < 1) {
+    if (currentSelection.isCollapsed || selectedText.length < 1 || selectedText.trim().length < 1) {
       return false;
     }
 
