@@ -180,8 +180,7 @@ export default class InlineToolbar extends Module {
     const selectionRect = SelectionUtils.rect as DOMRect;
     const wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
     const newCoords = {
-      // x: selectionRect.x - wrapperOffset.left,
-      x: selectionRect.x,
+      x: selectionRect.x - wrapperOffset.left,
       y: selectionRect.y
         // - this.nodes.wrapper.offsetHeight
         // + window.scrollY
