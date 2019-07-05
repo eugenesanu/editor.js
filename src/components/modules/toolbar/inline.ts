@@ -207,12 +207,12 @@ export default class InlineToolbar extends Module {
      */
     this.nodes.wrapper.classList.toggle(
       this.CSS.inlineToolbarLeftOriented,
-      realLeftCoord < 0,
+      realLeftCoord < this.width / 2,
     );
 
     this.nodes.wrapper.classList.toggle(
       this.CSS.inlineToolbarRightOriented,
-      realRightCoord > this.Editor.UI.contentRect.right,
+      realRightCoord > this.Editor.UI.contentRect.right - this.width / 2,
     );
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
