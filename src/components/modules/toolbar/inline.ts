@@ -198,8 +198,8 @@ export default class InlineToolbar extends Module {
     /**
      * Inline Toolbar has -50% translateX, so we need to check real coords to prevent overflowing
      */
-    const realLeftCoord = selectionRect.x - this.width / 2;
-    const realRightCoord = selectionRect.x + this.width / 2;
+    const realLeftCoord = newCoords.x - wrapperOffset.left - this.width / 2;
+    const realRightCoord = newCoords.x + wrapperOffset.left + this.width / 2;
 
     /**
      * By default, Inline Toolbar has top-corner at the center
