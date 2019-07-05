@@ -58,26 +58,11 @@ export default class UI extends Module {
    * @return {DOMRect}
    */
   public get contentRect(): DOMRect {
-    if (this.contentRectCache) {
-      return this.contentRectCache;
-    }
-
-    const someBlock = this.nodes.wrapper.querySelector(`.${Block.CSS.content}`);
-
-    /**
-     * When Editor is not ready, there is no Blocks, so return the default value
-     */
-    if (!someBlock) {
-      return {
-        width: 650,
-        left: 0,
-        right: 0,
-      } as DOMRect;
-    }
-
-    this.contentRectCache = someBlock.getBoundingClientRect() as DOMRect;
-
-    return this.contentRectCache;
+    return {
+      width: window.innerWidth,
+      left: 0,
+      right: window.innerWidth,
+    } as DOMRect;
   }
 
   /**
