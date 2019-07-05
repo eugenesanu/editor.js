@@ -312,6 +312,9 @@ export default class UI extends Module {
       case _.keyCodes.BACKSPACE:
         this.backspacePressed(event);
         break;
+    case _.keyCodes.DELETE:
+      this.deletePressed(event);
+      break;
       default:
         this.defaultBehaviour(event);
         break;
@@ -349,6 +352,29 @@ export default class UI extends Module {
    * @param {KeyboardEvent} event
    */
   private backspacePressed(event: KeyboardEvent): void {
+    const {BlockManager, BlockSelection, Caret} = this.Editor;
+
+    if (BlockSelection.anyBlockSelected) {
+      const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+      Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+
+      /** Clear selection */
+      BlockSelection.clearSelection(event);
+
+      /**
+       * Stop propagations
+       * Manipulation with BlockSelections is handled in global backspacePress because they may occur
+       * with CMD+A or RectangleSelection and they can be handled on document event
+       */
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    }
+  }
+
+  /**
+   * @param {KeyboardEvent} event
+   */
+  private deletePressed(event: KeyboardEvent): void {
     const {BlockManager, BlockSelection, Caret} = this.Editor;
 
     if (BlockSelection.anyBlockSelected) {
